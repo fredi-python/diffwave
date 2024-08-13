@@ -30,6 +30,7 @@ class ConditionalDataset(torch.utils.data.Dataset):
     self.filenames = []
     for path in paths:
       self.filenames += glob(f'{path}/**/*.wav', recursive=True)
+    print(f"Cond dataset: Found {len(self.filenames)} .wav files")  # Debug line
 
   def __len__(self):
     return len(self.filenames)
@@ -37,6 +38,8 @@ class ConditionalDataset(torch.utils.data.Dataset):
   def __getitem__(self, idx):
     audio_filename = self.filenames[idx]
     spec_filename = f'{audio_filename}.spec.npy'
+    if not os.path.exists(spec_filename):
+        print(f"Cond dataset: Missing spectrogram for {audio_filename}")  # Debug line
     signal, _ = torchaudio.load(audio_filename)
     spectrogram = np.load(spec_filename)
     return {
@@ -51,6 +54,7 @@ class UnconditionalDataset(torch.utils.data.Dataset):
     self.filenames = []
     for path in paths:
       self.filenames += glob(f'{path}/**/*.wav', recursive=True)
+    print(f"Uncond dataset: Found {len(self.filenames)} .wav files")  # Debug line
 
   def __len__(self):
     return len(self.filenames)
@@ -58,6 +62,8 @@ class UnconditionalDataset(torch.utils.data.Dataset):
   def __getitem__(self, idx):
     audio_filename = self.filenames[idx]
     spec_filename = f'{audio_filename}.spec.npy'
+    if not os.path.exists(spec_filename):
+        print(f"Uncond dataset: Missing spectrogram for {audio_filename}")  # Debug line
     signal, _ = torchaudio.load(audio_filename)
     return {
         'audio': signal[0],
