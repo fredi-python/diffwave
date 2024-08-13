@@ -169,6 +169,7 @@ def train(args, params):
     dataset = from_gtzan(params)
   else:
     dataset = from_path(args.data_dirs, params)
+  print("data_dir:", args.data_dirs)
   print(f"Loaded dataset with {len(dataset)} samples.")
   model = DiffWave(params).cuda()
   _train_impl(0, model, dataset, args, params)
@@ -182,7 +183,7 @@ def train_distributed(replica_id, replica_count, port, args, params):
     dataset = from_gtzan(params, is_distributed=True)
   else:
     dataset = from_path(args.data_dirs, params, is_distributed=True)
-
+  print("data_dir:", args.data_dirs)
   print(f"Loaded dataset with {len(dataset)} samples.")
   device = torch.device('cuda', replica_id)
   torch.cuda.set_device(device)
