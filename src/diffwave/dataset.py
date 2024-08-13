@@ -76,7 +76,15 @@ class Collator:
     self.params = params
 
   def collate(self, minibatch):
+    valid_records = 0
     samples_per_frame = self.params.hop_samples
+    for record in minibatch:
+      if 'audio' in record and (self.params.unconditional or 'spectrogram' in record):
+          valid_records += 1
+    print(f"Valid records in minibatch: {valid_records}")  # Debug line
+    if valid_records == 0:
+      print("NO VALID RECORDS FOUND")    
+    
     for record in minibatch:
       if self.params.unconditional:
           # Filter out records that aren't long enough.
